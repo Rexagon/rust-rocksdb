@@ -205,6 +205,9 @@ fn build_rocksdb() {
         // this was breaking the build on travis due to
         // > 4mb of warnings emitted.
         config.flag("-Wno-unused-parameter");
+        // this was causing lots of warnings
+        // (see https://github.com/facebook/rocksdb/issues/8525)
+        config.flag("-Wno-invalid-offsetof");
     }
 
     for file in lib_sources {
@@ -287,7 +290,7 @@ fn try_to_find_and_link_lib(lib_name: &str) -> bool {
 }
 
 fn cxx_standard() -> String {
-    env::var("ROCKSDB_CXX_STD").map_or("-std=c++11".to_owned(), |cxx_std| {
+    env::var("ROCKSDB_CXX_STD").map_or("-std=c++17".to_owned(), |cxx_std| {
         if !cxx_std.starts_with("-std=") {
             format!("-std={}", cxx_std)
         } else {

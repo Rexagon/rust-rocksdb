@@ -7,9 +7,9 @@
 
 // The build script may replace these values with real values based
 // on whether or not GIT is available and the platform settings
-static const std::string rocksdb_build_git_sha  = "rocksdb_build_git_sha:3122cb435875d720fc3d23a48eb7c0fa89d869aa";
-static const std::string rocksdb_build_git_tag = "rocksdb_build_git_tag:6.28.2";
-static const std::string rocksdb_build_date = "rocksdb_build_date:2022-02-02 06:19:00";
+static const std::string rocksdb_build_git_sha  = "rocksdb_build_git_sha:076ac983f40236171acfa6f8726eb79a51184727";
+static const std::string rocksdb_build_git_tag = "rocksdb_build_git_tag:7.0.4";
+static const std::string rocksdb_build_date = "rocksdb_build_date:2022-04-08 19:10:00";
 
 namespace ROCKSDB_NAMESPACE {
 static void AddProperty(std::unordered_map<std::string, std::string> *props, const std::string& name) {
@@ -23,7 +23,7 @@ static void AddProperty(std::unordered_map<std::string, std::string> *props, con
     }
   }
 }
-  
+
 static std::unordered_map<std::string, std::string>* LoadPropertiesSet() {
   auto * properties = new std::unordered_map<std::string, std::string>();
   AddProperty(properties, rocksdb_build_git_sha);
@@ -45,7 +45,7 @@ std::string GetRocksVersionAsString(bool with_patch) {
     return version;
   }
 }
-  
+
 std::string GetRocksBuildInfoAsString(const std::string& program, bool verbose) {
   std::string info = program + " (RocksDB) " + GetRocksVersionAsString(true);
   if (verbose) {
