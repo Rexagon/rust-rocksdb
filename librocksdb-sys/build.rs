@@ -184,12 +184,19 @@ fn build_rocksdb() {
             .collect::<Vec<&'static str>>();
 
         // Add Windows-specific sources
-        lib_sources.push("port/win/port_win.cc");
-        lib_sources.push("port/win/env_win.cc");
-        lib_sources.push("port/win/env_default.cc");
-        lib_sources.push("port/win/win_logger.cc");
-        lib_sources.push("port/win/io_win.cc");
-        lib_sources.push("port/win/win_thread.cc");
+        lib_sources.extend([
+            "port/win/env_default.cc",
+            "port/win/port_win.cc",
+            "port/win/xpress_win.cc",
+            "port/win/io_win.cc",
+            "port/win/win_thread.cc",
+            "port/win/env_win.cc",
+            "port/win/win_logger.cc",
+        ]);
+
+        if cfg!(feature = "jemalloc") {
+            lib_sources.push("port/win/win_jemalloc.cc");
+        }
     }
 
     config.define("ROCKSDB_SUPPORT_THREAD_LOCAL", None);
@@ -200,13 +207,18 @@ fn build_rocksdb() {
 
     if target.contains("msvc") {
         config.flag("-EHsc");
+        config.flag("-std:c++17");
     } else {
         config.flag(&cxx_standard());
-        // this was breaking the build on travis due to
-        // > 4mb of warnings emitted.
+        // matches the flags in CMakeLists.txt from rocksdb
+        config.flag("-Wsign-compare");
+        config.flag("-Wshadow");
         config.flag("-Wno-unused-parameter");
-        // this was causing lots of warnings
-        // (see https://github.com/facebook/rocksdb/issues/8525)
+        config.flag("-Wno-unused-variable");
+        config.flag("-Woverloaded-virtual");
+        config.flag("-Wnon-virtual-dtor");
+        config.flag("-Wno-missing-field-initializers");
+        config.flag("-Wno-strict-aliasing");
         config.flag("-Wno-invalid-offsetof");
     }
 
@@ -218,6 +230,7 @@ fn build_rocksdb() {
     config.file("build_version.cc");
 
     config.cpp(true);
+    config.flag_if_supported("-std=c++17");
     config.compile("librocksdb.a");
 }
 
