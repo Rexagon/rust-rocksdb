@@ -3275,6 +3275,10 @@ impl ReadOptions {
     // TODO add snapshot wrapper structs with proper destructors;
     // that struct needs an "iterator" impl too.
 
+    pub fn inner(&self) -> *mut ffi::rocksdb_readoptions_t {
+        self.inner
+    }
+
     /// Specify whether the "data block"/"index block"/"filter block"
     /// read for this iteration should be cached in memory?
     /// Callers may wish to set this field to false for bulk scans.
